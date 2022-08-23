@@ -1,0 +1,150 @@
+server:
+  port: 9996
+  servlet:
+    context-path:
+
+spring:
+  application:
+    name: prince-operation
+
+  shardingsphere:
+    props:
+      sql:
+        show: true
+    datasource:
+      names: master, slave
+      master:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/prince?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+        username: root
+        password: root
+      slave:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3307/prince?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+        username: root
+        password: root
+
+    sharding:
+      master-slave-rules:
+        master:
+          master-data-source-name: master
+          slave-data-source-names:
+            - slave
+
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+        group: ${spring.application.name}
+      discovery:
+        server-addr: 127.0.0.1:8848
+    sentinel:
+      transport:
+        port: 8720
+        dashboard: 192.168.1.254:8080
+        client-ip: 192.168.1.34
+      eager: true
+      datasource:
+        prince-user :
+          nacos:
+            server-addr: 127.0.0.1:8848
+            namespace: ee0e5084-a885-429c-a13e-82e13f21cb8c
+            data-id: ${spring.application.name}
+            group-id: ${spring.application.name}-group
+            data-type: json
+            rule-type: flow
+            username: nacos
+            password: nacos
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 6
+    pool:
+      #连接池最大连接数（使用负值表示没有限制）
+      max-active: 8
+      #连接池最大阻塞等待时间（使用负值表示没有限制）
+      max-wait: -1
+      #连接池中的最大空闲连接
+      max-idle: 8
+      #连接池中的最小空闲连接
+      min-idle: 0
+
+  rabbitmq:
+    addresses: 127.0.0.1
+    port: 5672
+    connection-timeout: 60000
+    virtual-host: /
+    template:
+      exchange: prince
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: com.prince.operation.entity
+
+dubbo:
+  protocol:    #Dubbo 服务暴露的协议配置，其中子属性 name 为协议名称，port 为协议端口（ -1 表示自增端口，从 20880 开始）
+    name: dubbo
+    port: -1  #dubbo协议缺省端口为20880，rmi协议缺省端口为1099，http和hessian协议缺省端口为80；如果没有配置port，则自动采用默认端口，如果配置为-1，则会分配一个没有被占用的端口。Dubbo 2.4.0+，分配的端口在协议缺省端口的基础上增长，确保端口段可控
+  registry:
+    #dubbo服务注册端口，注册中心服务器地址，如果地址没有端口缺省为9090，同一集群内的多个地址用逗号分隔，如：ip:port,ip:port
+    #其中前缀spring-cloud说明：挂载到 Spring Cloud注册中心
+    address: nacos://127.0.0.1:8848
+    #check: false  #关闭注册中心是否启动的相关检查,false表示不检查注册中心是否启动，就不会报错
+  cloud:
+    subscribed-services: prince
+  consumer:
+    check: false  #关闭订阅服务是否启动的检查【检查时，没有服务提供者会报错】
+    timeout: 60000
+  provider:
+    timeout: 60000
+
+seata:
+  enabled: true
+  enable-auto-data-source-proxy: true
+  application-id: ${spring.application.name}
+  tx-service-group: prince_tx_group
+  config:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: fe398045-d3ea-4112-82e8-edd0df700b7f
+      username: nacos
+      password: nacos
+  registry:
+    type: nacos
+    nacos:
+      server-addr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      namespace: fe398045-d3ea-4112-82e8-edd0df700b7f
+      username: nacos
+      password: nacos
+  service:
+    vgroup-mapping:
+      prince_tx_group: default
+
+logging:
+  pattern:
+    level: DEBUG
+
+aliyun:
+  accessKeyId: LTAI5tQAhaf7kyKDagYRt6DY
+  accessKeySecret: 4Ww5BAbQnNoTJeGK9mWatIcFblqQ8Q
+  face:
+    sceneId : 123
+  sms:
+    signName: 巨鲸互娱
+    templateCode: SMS_222861071
+
+third:
+  jpush:
+    appKey: 0dad0702049f3ff870bf09ae
+    masterSecret: 011a67bfbd8e85b87ead34ed
+    private-key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBANZIJBl7FyUS4LKu3o5IySbcDnzke7v8yYM5QfGJDoYCGSJ9ZBIOqFr3eFVhqRy3MUtsv5Xlux6DnrYTaE4hJLY5REOoEcaQ1hD1cLCVdySgC8CQhhQp/ba4GS24sTHImwtzAvq747R0NZYuEHxMKlVKvhBrfqkxT+GywanrjK6JAgMBAAECgYBpPi1cxnPrpYXuvKxaPa1uBI6pEJ8lCVb/uFOHCcW0U7t8kRFhPQm7A+h6JukkTWVMojDGsnpg1kxRKN8F4IligANCYY/mD7zVmFVGoh12N3J05Zm7dOsVSPT6Ei21dybzkgYXyaEmHk/O1vAFqyvFibyP4VjNgRUqOsvQIVbF8QJBAPbWEeIzmE1mFIHbocd+330iP8CV8kVm9X5oBYO6ual8t5MqISzgYFfHhcPn4M3TbT2oKcV2F09OMyo/dOwa0JsCQQDePKyYxUYob9kpVuc74iAhaVt2lf9ayUGnjnTqPE1DMPLODOG0ezvv+MKT+FeUNya+I/s3afV5gtkx5anObfWrAkEApwyvY7fpThBUtqGudjXuCGDiZnLUWJXadObvPHxlZEfscSNk+lsLuLxmUfQe1w1MdBrX0jQeiGRzCheSCKwJGwJBAMbI5OW9x7SR32CP4EP7TxwzvmFDaGbPkI+M6F1A1Sdd2EGg2h7zADj1fS6YO9ZSwq/fRW1atP0coqR0NsB0MQMCQAon9QN5ulkK9TL3P8txxQ+zpiR5+luLENA1VzY4l+s+sdRE8PwxIE1Gim1TB9p1JmSL78l08UREMCiaCetSRRo=
+  wechat:
+    verify-url:
+  qq:
+    appKey: 101965941

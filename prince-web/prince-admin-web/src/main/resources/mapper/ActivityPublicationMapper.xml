@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prince.system.admin.mapper.ActivityPublicationMapper">
+
+    <select id="selectIsPublishedActivities" resultType="java.lang.Long">
+        select activity_id
+        from activity_publication
+        where publication_date &lt; NOW() and NOW() &lt; end_time and is_cancel = 0
+    </select>
+
+</mapper>

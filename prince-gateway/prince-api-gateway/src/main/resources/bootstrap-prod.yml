@@ -1,0 +1,111 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: prince-gateway
+
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 6
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 192.168.1.254:8080
+        client-ip: 192.168.1.34
+      eager: true
+      datasource:
+        prince-gateway-flow:
+          nacos:
+            namespace: ee0e5084-a885-429c-a13e-82e13f21cb8c
+            group-id: ${spring.application.name}-group
+            data-id: ${spring.application.name}-flow
+            data-type: json
+            rule-type: gw_flow
+            username: nacos
+            password: nacos
+        prince-gateway-degrade:
+          nacos:
+            namespace: ee0e5084-a885-429c-a13e-82e13f21cb8c
+            group-id: ${spring.application.name}-group
+            data-id: ${spring.application.name}-degrade
+            data-type: json
+            rule-type: degrade
+            username: nacos
+            password: nacos
+
+
+    gateway:
+      # 网关跨域配置start---------------------------------
+      # 开启网关的跨域功能，具体微服务上的跨域需要进行关闭，否则无效
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: "*"
+            allowed-headers: "*"
+            #              - Access-Control-Allow-Origin
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTION
+            allowCredentials : true
+
+      routes:
+        - id: prince-user             #路由ID，要求唯一，通常配置成application name
+          uri: lb://prince-user       #匹配后路由的服务地址   lb:类型，表示从微服务注册中心（如Eureka）订阅服务，并且通过负载均衡进行服务的路由
+          #此处也可配置为具体的url地址，如：127.0.0.1：8080
+          predicates:
+            - Path=/user/**         #断言，路径匹配则进行路由
+          filters:
+            - StripPrefix=1          #去掉1个uri前缀
+
+        - id: prince-order
+          uri: lb://prince-order
+          predicates:
+            - Path=/order/**
+          filters:
+            - StripPrefix=1
+
+        - id: prince-goods
+          uri: lb://prince-goods
+          predicates:
+            - Path=/goods/**
+          filters:
+            - StripPrefix=1
+
+        - id: prince-chat
+          uri: lb://prince-chat
+          predicates:
+            - Path=/chat/**
+          filters:
+            - StripPrefix=1
+          metadata:
+            response-timeout: 300
+            connect-timeout: 300
+
+        - id: prince-moment
+          uri: lb://prince-moment
+          predicates:
+            - Path=/moment/**
+          filters:
+            - StripPrefix=1
+
+        - id: prince-system
+          uri: lb://prince-system
+          predicates:
+            - Path=/system/**
+
+logging:
+  pattern:
+    level: info

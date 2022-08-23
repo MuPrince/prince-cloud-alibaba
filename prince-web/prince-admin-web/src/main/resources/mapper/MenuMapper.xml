@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prince.system.admin.mapper.MenuMapper">
+
+    <select id="selectListByRoleId" resultType="com.prince.system.admin.entity.po.Menu">
+        select mid, name, parent_id, sort, url, enable, icon, level
+        from sys_menu
+        left join sys_role_menu on mid = menu_id
+        where enable = 1 and role_id = #{roleId}
+        order by sort
+    </select>
+</mapper>

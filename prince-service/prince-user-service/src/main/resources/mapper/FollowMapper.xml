@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prince.user.mapper.FollowMapper">
+
+    <select id="getFollowed" resultType="com.prince.user.entity.dto.UserInfoDTO">
+        select u.id, ui.nickname, ui.head_pic, vip_level,last_login_time,signature
+            from follow f
+        left join user u on u.id = f.followed
+        left join user_info ui on u.id = ui.user_id
+        where status > 0 and vip_end_time > NOW() and follower = #{userId}
+    </select>
+    <select id="getFollowers" resultType="com.prince.user.entity.dto.UserInfoDTO">
+        select u.id, ui.nickname, ui.head_pic, vip_level,last_login_time,signature
+            from follow f
+        left join user u on u.id = f.follower
+        left join user_info ui on u.id = ui.user_id
+        where status > 0 and vip_end_time > NOW() and followed = #{userId}
+    </select>
+
+</mapper>

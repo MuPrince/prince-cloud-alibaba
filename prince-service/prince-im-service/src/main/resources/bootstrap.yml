@@ -1,0 +1,72 @@
+server:
+  port: 9994
+  servlet:
+    context-path:
+
+spring:
+  application:
+    name: prince-im
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/prince?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    hikari:
+      maximum-pool-size: 8
+      connection-timeout: 60000
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+      discovery:
+        server-addr: 127.0.0.1:8848
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 6
+
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    connection-timeout: 60000
+    virtual-host: /
+
+mybatis:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: com.prince.im.entity
+
+dubbo:
+  protocol:    #Dubbo 服务暴露的协议配置，其中子属性 name 为协议名称，port 为协议端口（ -1 表示自增端口，从 20880 开始）
+    name: dubbo
+    port: -1  #dubbo协议缺省端口为20880，rmi协议缺省端口为1099，http和hessian协议缺省端口为80；如果没有配置port，则自动采用默认端口，如果配置为-1，则会分配一个没有被占用的端口。Dubbo 2.4.0+，分配的端口在协议缺省端口的基础上增长，确保端口段可控
+  registry:
+    #dubbo服务注册端口，注册中心服务器地址，如果地址没有端口缺省为9090，同一集群内的多个地址用逗号分隔，如：ip:port,ip:port
+    #其中前缀spring-cloud说明：挂载到 Spring Cloud注册中心
+    address: nacos://127.0.0.1:8848
+    #check: false  #关闭注册中心是否启动的相关检查,false表示不检查注册中心是否启动，就不会报错
+  cloud:
+    subscribed-services: prince-im
+  consumer:
+    check: false  #关闭订阅服务是否启动的检查【检查时，没有服务提供者会报错】
+    timeout: 60000
+  provider:
+    timeout: 60000
+
+logging:
+  pattern:
+    level: info
+
+tencent:
+  cloud:
+    im:
+      sdkAppId: 1400705726
+      key: b6cb718f926598564b65bc21858deffb0781a30d9e628bb333aabad1df0c5bb8
+
+aliyun:
+  accessKeyId: LTAI5tQAhaf7kyKDagYRt6DY
+  accessKeySecret: 4Ww5BAbQnNoTJeGK9mWatIcFblqQ8Q
+  sms:
+    signName: 巨鲸互娱
+    templateCode: SMS_222861071
+

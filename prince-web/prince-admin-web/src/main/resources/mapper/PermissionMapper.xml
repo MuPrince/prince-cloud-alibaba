@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prince.system.admin.mapper.PermissionMapper">
+
+    <select id="searchList" parameterType="com.prince.system.admin.entity.dto.PermissionDTO" resultType="com.prince.system.admin.entity.po.Permission">
+        SELECT p.pid,menu_id, name as menu_name,p.url,method,p.matching_way,description FROM sys_permission p LEFT JOIN sys_menu
+        ON mid = p.menu_id
+        <where>
+               1=1
+            <if test="menuName != null and menuName != ''">
+                and name like "%"#{menuName}"%"
+            </if>
+            <if test="method != null and method != ''">
+                and method = #{method}
+            </if>
+            <if test="url != null and url != ''">
+                and p.url like #{url}"%"
+            </if>
+            <if test="matchingWay != null">
+                and matching_way = #{matchingWay}
+            </if>
+            <if test="description != null and description != ''">
+                and description like "%"#{description}"%"
+            </if>
+        </where>
+    </select>
+</mapper>

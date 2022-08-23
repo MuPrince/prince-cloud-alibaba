@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prince.moment.mapper.TopicMapper">
+
+    <delete id="deleteRelations">
+        delete
+        from moment_topic
+        where topic_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+             #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteRelation">
+        delete
+        from moment_topic
+        where topic_id = #{id}
+    </delete>
+    <select id="topTenWithKeyword" resultType="com.prince.moment.entity.po.Topic">
+        select tid, keyword, description, image, hot, create_time, `update` from topic
+        where `keyword` like "%"#{keyword}"%" order by hot limit 10
+    </select>
+</mapper>

@@ -1,0 +1,3 @@
+userInfoProviderFilter=UserInfoProviderFilter
+userInfoConsumerFilter=UserInfoConsumerFilter
+exception=DubboRpcServiceExceptionFilter

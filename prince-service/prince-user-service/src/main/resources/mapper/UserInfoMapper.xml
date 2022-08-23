@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prince.user.mapper.UserInfoMapper">
+
+    <select id="findPerson" resultType="com.prince.user.entity.dto.UserInfoDTO">
+        select u.id,
+               user_id,
+               ui.prince_number,
+               ui.nickname,
+               real_name,
+               ui.head_pic,
+               background_pic,
+               self_identity,
+               relationship_status,
+               birthday,
+               id_card,
+               phone,
+               constellation,
+               height,
+               weight,
+               age,
+               signature,
+               vip_level,
+               vip_end_time,
+               im_account,
+               last_login_time,
+               registry_time,
+               points,
+               experience_value,
+               credit_scope
+        from user_info ui
+                 left join user u on u.id = ui.user_id
+        where user_id = #{userId}
+    </select>
+    <select id="selectSelf" resultType="com.prince.user.entity.dto.UserInfoDTO">
+        select u.id,
+               user_id,
+               ui.prince_number,
+               ui.nickname,
+               real_name,
+               ui.head_pic,
+               background_pic,
+               self_identity,
+               relationship_status,
+               birthday,
+               id_card,
+               phone,
+               constellation,
+               height,
+               weight,
+               age,
+               signature,
+               vip_level,
+               vip_end_time,
+               im_account,
+               last_login_time,
+               registry_time,
+               points,
+               experience_value,
+               credit_scope
+        from user_info ui
+                 left join user u on u.id = ui.user_id
+        where user_id = #{userId}
+    </select>
+    <select id="search" resultType="com.prince.user.entity.dto.UserInfoDTO">
+        select
+        u.id,user_id,ui.prince_number,ui.nickname,real_name,ui.head_pic,background_pic,self_identity,relationship_status,birthday,
+        id_card,phone,constellation,height,weight,age,signature,vip_level,
+        vip_end_time,im_account,last_login_time,registry_time,points,experience_value,credit_scope
+        from user_info ui
+        left join user u on u.id = ui.user_id
+        where ui.nickname like #{keyword}
+        <if test="count != null and count != 0">
+            limit #{count}
+        </if>
+    </select>
+</mapper>

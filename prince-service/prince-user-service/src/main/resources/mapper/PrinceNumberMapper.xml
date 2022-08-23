@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prince.user.mapper.PrinceNumberMapper">
+    <resultMap id="Banner" type="com.prince.user.entity.po.PrinceNumber">
+    </resultMap>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into prince2.prince_number(number, level) VALUES
+        <foreach collection="nums" item="num" separator=",">
+            (#{num.princeNumber}, #{num.level})
+        </foreach>
+    </insert>
+
+</mapper>

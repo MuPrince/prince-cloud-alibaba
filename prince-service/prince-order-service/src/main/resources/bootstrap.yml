@@ -1,0 +1,57 @@
+server:
+  port: 9996
+  servlet:
+    context-path: /order
+
+spring:
+  application:
+    name: prince-order
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/prince?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    hikari:
+      maximum-pool-size: 8
+      connection-timeout: 60000
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yml
+      discovery:
+        server-addr: 127.0.0.1:8848
+  redis:
+    host: 127.0.0.1
+    port: 6379
+
+mybatis:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: com.prince.*.entity
+
+logging:
+  pattern:
+    level: info
+
+pay:
+  wx:
+    native:
+      mchid: mchid_77777
+      appid: appid_123123
+      appkey: appkey_666666
+    app:
+      mchid: mchid_77777
+      appid: appid_123123
+      appkey: appkey_666666
+
+  ali:
+    web:
+      mchid: mchid_77777
+      appid: appid_123123
+      appkey: appkey_666666
+    app:
+      mchid: mchid_77777
+      appid: appid_123123
+      appkey: appkey_666666
+

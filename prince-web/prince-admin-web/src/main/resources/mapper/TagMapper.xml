@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.prince.system.admin.mapper.TagMapper">
+
+    <select id="selectListByUserId" resultType="com.prince.system.entity.po.Tag">
+        select id, name, action_scope
+        from tag t
+        left join user_tag u on t.id = u.tag_id
+        where u.user_id = #{userId}
+    </select>
+</mapper>
